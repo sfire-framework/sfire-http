@@ -1,0 +1,38 @@
+{
+    "name": "sfire-framework/sfire-http",
+    "description": "Provides an easy interface for performing Hyper-Text Transfer Protocol (HTTP) requests, parsing of URL's/domains and working with HTTP cookies.",
+    "homepage": "https://sfire.io",
+    "keywords": [
+        "framework",
+        "sfire",
+        "http",
+        "curl",
+        "client",
+        "cookie",
+        "domain",
+        "url",
+        "response",
+        "request"
+    ],
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Kris Kuiper",
+            "email": "kris@sfire.io"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "sfire-framework/sfire-datacontrol": "1.0.*",
+        "sfire-framework/sfire-entity": "1.0.*",
+        "sfire-framework/sfire-filecontrol": "1.0.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8"
+    },
+    "autoload": {
+        "psr-4": {
+            "sFire\\Http\\": "./src/"
+        }
+    }
+}
