@@ -386,16 +386,21 @@ class Request {
 	 * @return null|string
 	 */
 	public static function getHost(): ?string {
-		return $_SERVER['HTTP_X_FORWARDED_HOST'] ?? $_SERVER['HTTP_HOST'] ?? null;
+		return $_SERVER['HTTP_X_FORWARDED_HOST'] ?? $_SERVER['HTTP-X-FORWARDED-HOST'] ?? $_SERVER['HTTP_HOST'] ?? null;
 	}
 
 
     /**
      * Returns the port from the current request
-     * @return null|string
+     * @return null|int
      */
-    public static function getPort(): ?string {
-        return $_SERVER['HTTP_X_FORWARDED_PORT'] ?? $_SERVER['SERVER_PORT'] ?? null;
+    public static function getPort(): ?int {
+
+        $port = $_SERVER['HTTP_X_FORWARDED_PORT'] ?? $_SERVER['HTTP-X-FORWARDED-PORT'] ?? $_SERVER['SERVER_PORT'] ?? null;
+
+        if(null !== $port) {
+            return (int) $port;
+        }
     }
 
 
