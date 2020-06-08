@@ -22,27 +22,6 @@ use sFire\DataControl\TypeArray;
 class Request {
 
 
-	/**
-	 * Convert an empty string to null
-	 * @var int
-	 */
-	public const EMPTY_STRING_TO_NULL = 1;
-
-
-	/**
-	 * Convert an empty array to null
-	 * @var int
-	 */
-    public const EMPTY_ARRAY_TO_NULL = 2;
-
-
-	/**
-	 * Trim a string from spaces
-	 * @var int
-	 */
-    public const TRIM_STRING = 3;
-
-
     /**
      * Contains instance of Request
      * @var null|Request
@@ -75,29 +54,6 @@ class Request {
         }
 
 	    return static::$instance;
-	}
-
-
-	/**
-	 * Enable options like trim strings, empty array to null and empty string to null
-	 * @param int $option
-	 * @return void
-	 */
-	public static function enableOption(int $option): void {
-		static::$options[$option] = true;
-	}
-
-
-	/**
-	 * Disable options like trim strings, empty array to null and empty string to null
-	 * @param int $option
-	 * @return void
-	 */
-	public static function disableOption(int $option): void {
-		
-		if(true === isset(static::$options[$option])) {
-			unset(static::$options[$option]);
-		}
 	}
 
 
@@ -368,7 +324,7 @@ class Request {
 	 * @return null|string
 	 */
 	public static function getScheme(): ?string {
-		return $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? $_SERVER['HTTP-X-FORWARDED-PROTO'] ?? $_SERVER['REQUEST_SCHEME'] ?? null;
+		return $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? $_SERVER['REQUEST_SCHEME'] ?? null;
 	}
 
 
@@ -386,7 +342,7 @@ class Request {
 	 * @return null|string
 	 */
 	public static function getHost(): ?string {
-		return $_SERVER['HTTP_X_FORWARDED_HOST'] ?? $_SERVER['HTTP-X-FORWARDED-HOST'] ?? $_SERVER['HTTP_HOST'] ?? null;
+		return $_SERVER['HTTP_X_FORWARDED_HOST']  ?? $_SERVER['HTTP_HOST'] ?? null;
 	}
 
 
@@ -396,17 +352,19 @@ class Request {
      */
     public static function getPort(): ?int {
 
-        $port = $_SERVER['HTTP_X_FORWARDED_PORT'] ?? $_SERVER['HTTP-X-FORWARDED-PORT'] ?? $_SERVER['SERVER_PORT'] ?? null;
+        $port = $_SERVER['HTTP_X_FORWARDED_PORT'] ?? $_SERVER['SERVER_PORT'] ?? null;
 
         if(null !== $port) {
             return (int) $port;
         }
+
+        return null;
     }
 
 
     /**
      * Returns all the uploaded files in a more readable format from the $_FILES array
-     * @param bool $skipEmpty
+     * @param bool $skipEmpty Skip empty files
      * @return array
      */
 	public static function getUploadedFiles(bool $skipEmpty = true): array {
@@ -609,7 +567,7 @@ class Request {
 	 * Return the request method
 	 * @return string
 	 */
-	public static function getMethod() {
+	public static function getMethod(): ?string {
 		return isset($_SERVER['REQUEST_METHOD']) ? strtolower($_SERVER['REQUEST_METHOD']) : null;
 	}
 
@@ -648,7 +606,7 @@ class Request {
 	 */
 	public static function setScheme(string $scheme): void {
 
-		$types = ['HTTP_X_FORWARDED_PROTO', 'HTTP-X-FORWARDED-PROTO'];
+		$types = ['HTTP_X_FORWARDED_PROTO'];
 
 		foreach($types as $protocol) {
 			
@@ -671,7 +629,7 @@ class Request {
 	        return getHostByName(php_uname('n'));
         }
 
-		return $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['HTTP_X_REAL_IP'] ?? $_SERVER['HTTP-X-FORWARDED-FOR'] ?? $_SERVER['HTTP_VIA'] ?? $_SERVER['REMOTE_ADDR'] ?? null;
+		return $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['HTTP_X_REAL_IP'] ?? $_SERVER['HTTP_VIA'] ?? $_SERVER['REMOTE_ADDR'] ?? null;
 	}
 
 
@@ -707,32 +665,7 @@ class Request {
 
                 $translator = new StringTranslator(static::$method['data']);
                 $data       = $translator -> get($key);
-
-				//Trim string
-				if(true === isset(static::$options[self::TRIM_STRING])) {
-
-					if(true === is_string($data)) {
-						$data = trim($data);
-					}
-				}
-
-				//Convert empty string to null
-				if(true === isset(static::$options[self::EMPTY_STRING_TO_NULL])) {
-
-					if(true === is_string($data) && strlen($data) === 0) {
-						$data = null;
-					}
-				}
-
-				//Convert empty array to null
-				if(true === isset(static::$options[self::EMPTY_ARRAY_TO_NULL])) {
-
-					if(true === is_array($data) && count($data) === 0) {
-						$data = null;
-					}
-				}
-
-				$default = null === $data ? $default : $data;
+				$default    = (null === $data ? $default : $data);
 			}
 
 			static::$method = [];
