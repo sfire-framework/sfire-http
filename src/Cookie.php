@@ -20,29 +20,29 @@ class Cookie {
 
 
     /**
-     * Contains instance of Cookie
-     * @var null|Cookie
+     * Contains instance of self
+     * @var null|self
      */
     private static ?self $instance = null;
 
 
-	/**
-	 * Contains all the arbitrary data
-	 * @var array
-	 */
-	protected static array $data = [];
-
-
-	/**
-	 * Constructor
-	 */
-	public function __construct() {
-		static::$data = &$_COOKIE;
-	}
+    /**
+     * Contains all the arbitrary data
+     * @var array
+     */
+    protected static array $data = [];
 
 
     /**
-     * Returns an instance of self
+     * Constructor
+     */
+    public function __construct() {
+        static::$data = &$_COOKIE;
+    }
+
+
+    /**
+     * Returns instance of self
      * @return self
      */
     public static function getInstance(): self {
@@ -55,88 +55,88 @@ class Cookie {
     }
 
 
-	/**
-	 * Sets a new cookie and sends it to the browser
-	 * @param string $name The name of the cookie
-	 * @param string $value The content of the cookie
-	 * @param int $seconds Expiration in seconds from current timestamp
-	 * @param string $path The path on the server in which the cookie will be available on
-	 * @param string $domain The (sub)domain that the cookie is available to
-	 * @param bool $secure Indicates that the cookie should only be transmitted over a secure HTTPS connection from the client
-	 * @param bool $httpOnly When TRUE the cookie will be made accessible only through the HTTP protocol
-	 * @return bool
-	 */
-	public static function add(string $name, string $value = null, int $seconds = 0, string $path = null, string $domain = null, bool $secure = null, bool $httpOnly = null): bool {
+    /**
+     * Sets a new cookie and sends it to the browser
+     * @param string $name The name of the cookie
+     * @param string $value The content of the cookie
+     * @param int $seconds Expiration in seconds from current timestamp
+     * @param string $path The path on the server in which the cookie will be available on
+     * @param string $domain The (sub)domain that the cookie is available to
+     * @param bool $secure Indicates that the cookie should only be transmitted over a secure HTTPS connection from the client
+     * @param bool $httpOnly When TRUE the cookie will be made accessible only through the HTTP protocol
+     * @return bool
+     */
+    public static function add(string $name, string $value = null, int $seconds = 0, string $path = null, string $domain = null, bool $secure = null, bool $httpOnly = null): bool {
 
-		$cookie = session_get_cookie_params();
-		return setcookie($name, $value, time() + $seconds, ($path ?? $cookie['path']), ($domain ?? $cookie['domain']), ($secure ?? $cookie['secure']), ($httpOnly ?? $cookie['httponly']));
-	}
-
-
-	/**
-	 * Retrieve the value of the cookie and delete it after
-	 * @param string $name The name of the cookie
-	 * @param mixed $default A default value if the cookie could not be found
-	 * @return mixed
-	 */
-	public static function pull(string $name, $default = null) {
-
-		if(true === isset(static::$data[$name])) {
-			
-			$default = static :: get($name);
-			static :: add($name, null, -99999999);
-		}
-
-		return $default;
-	}
+        $cookie = session_get_cookie_params();
+        return setcookie($name, $value, time() + $seconds, ($path ?? $cookie['path']), ($domain ?? $cookie['domain']), ($secure ?? $cookie['secure']), ($httpOnly ?? $cookie['httponly']));
+    }
 
 
-	/**
-	 * Remove data based on name 
-	 * @param string $name The name of the cookie
-	 * @return void
-	 */
-	public static function remove(string $name = null): void {
+    /**
+     * Retrieve the value of the cookie and delete it after
+     * @param string $name The name of the cookie
+     * @param mixed $default A default value if the cookie could not be found
+     * @return mixed
+     */
+    public static function pull(string $name, $default = null) {
 
-		if($name && isset(static::$data[$name])) {
-			static :: add($name, null, -99999999);
-		}
-	}
+        if(true === isset(static::$data[$name])) {
 
+            $default = static :: get($name);
+            static :: add($name, null, -99999999);
+        }
 
-	/**
-	 * Deletes all the cookies
-	 * @return void
-	 */
-	public static function flush(): void {
-		
-		foreach(static::$data as $key => $value) {
-			static :: add($key, null, -99999999);
-		}
-	}
+        return $default;
+    }
 
 
-	/**
-	 * Retrieve cookie value based on cookie name
-	 * @param string $name The name of the cookie
-	 * @param mixed $default A default value if the cookie could not be found
-	 * @return mixed
-	 */
-	public static function get(string $name, $default = null) {
+    /**
+     * Remove data based on name
+     * @param string $name The name of the cookie
+     * @return void
+     */
+    public static function remove(string $name = null): void {
 
-		if(true === isset(static::$data[$name])) {
-			return static::$data[$name];
-		}
-
-		return $default;
-	}
+        if($name && isset(static::$data[$name])) {
+            static :: add($name, null, -99999999);
+        }
+    }
 
 
-	/**
-	 * Get all cookies
-	 * @return array
-	 */
-	public static function getAll(): array {
-		return static::$data;
-	}
+    /**
+     * Deletes all the cookies
+     * @return void
+     */
+    public static function flush(): void {
+
+        foreach(static::$data as $key => $value) {
+            static :: add($key, null, -99999999);
+        }
+    }
+
+
+    /**
+     * Retrieve cookie value based on cookie name
+     * @param string $name The name of the cookie
+     * @param mixed $default A default value if the cookie could not be found
+     * @return mixed
+     */
+    public static function get(string $name, $default = null) {
+
+        if(true === isset(static::$data[$name])) {
+            return static::$data[$name];
+        }
+
+        return $default;
+    }
+
+
+    /**
+     * Get all cookies
+     * @return array
+     */
+    public static function getAll(): array {
+        return static::$data;
+    }
 }
